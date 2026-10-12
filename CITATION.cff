@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "anchormap"
+message: "If you use this software, please cite it."
+type: software
+authors:
+  - family-names: "Ningoo"
+    given-names: "Kunjal Kamal"
+    affiliation: "iGEM VIT Vellore 2026 (Team Nishvasa)"
+  - family-names: "Bera"
+    given-names: "Ayush"
+    affiliation: "iGEM VIT Vellore 2026 (Team Nishvasa)"
+  - family-names: "Ganapathy"
+    given-names: "Akhurath"
+    affiliation: "iGEM VIT Vellore 2026 (Team Nishvasa)"
+license: MIT
+version: 0.2.0
+repository-code: "https://github.com/YOUR-ORG/anchormap"
+abstract: >
+  Surface, interface and support-compatibility analysis for immobilising
+  multimeric enzymes. Computes assembly-state solvent accessibility, coupling
+  site maps with active-site exclusions, multipoint crosslinker reachability,
+  subunit interface energetics with convergence reporting, and support
+  charge compatibility. Preconditions encode failure modes observed during
+  development.
+keywords:
+  - enzyme immobilisation
+  - protein interfaces
+  - solvent accessibility
+  - structural biology

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anchormap"
+version = "0.2.0"
+description = "Surface, interface and support-compatibility analysis for immobilising multimeric enzymes"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "iGEM VIT Vellore 2026 (Team Nishvasa)" }]
+keywords = [
+  "structural biology",
+  "enzyme immobilisation",
+  "protein interfaces",
+  "solvent accessibility",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+  "numpy>=1.26",
+  "biopython>=1.83",
+  "freesasa>=2.2",
+]
+
+[project.optional-dependencies]
+refine = ["openmm>=8.1", "pdbfixer>=1.9"]
+dev = ["pytest>=8.0"]
+
+[project.urls]
+Source = "https://github.com/YOUR-ORG/anchormap"
+"Model page" = "https://2026.igem.wiki/vit-vellore/model"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anchormap"]
