@@ -197,3 +197,37 @@ def test_metal_guard_catches_a_stripped_file():
         assert guards.which_file_has_metals(path) == {path: 0}
     finally:
         os.unlink(path)
+
+
+def test_molprobity_parser_survives_bare_angle_brackets():
+    """MolProbity text contains 'Goal: <0.3%' and '>0.25A'.
+
+    A greedy <...> strip deletes everything between them, which silently
+    removed the Ramachandran and MolProbity score rows until caught.
+    """
+    import tempfile, os
+    from anchormap import prep
+    sample = (
+        "Clashscore, all atoms: 31.98\n"
+        "Poor rotamers 87 11.39% Goal: <0.3%\n"
+        "Ramachandran outliers 39 4.42%\n"
+        "MolProbity score^ 3.52\n"
+        "CB deviations >0.25A 2 0.24%\n"
+    )
+    fd, path = tempfile.mkstemp(suffix='.txt')
+    with os.fdopen(fd, 'w') as f:
+        f.write(sample)
+    try:
+        d = prep.parse_molprobity(path)
+        assert d['clashscore'] == 31.98
+        assert d['rama_outliers'] == 39.0
+        assert d['molprobity_score'] == 3.52
+    finally:
+        os.unlink(path)
+
+
+def test_validate_points_at_the_parser():
+    from anchormap import prep
+    with pytest.raises(NotImplementedError) as e:
+        prep.validate('anything.pdb')
+    assert 'parse_molprobity' in str(e.value)

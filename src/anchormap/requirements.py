@@ -102,7 +102,7 @@ def report() -> dict[str, bool]:
     return {k: available(k) for k in TOOLS}
 
 
-def _main() -> None:
+def main() -> None:
     status = report()
     width = max(len(t.name) for t in TOOLS.values())
     print("anchormap external tool check\n")
@@ -120,5 +120,6 @@ def _main() -> None:
         print("\nAll tools present.")
 
 
+# Also installed as the console command `anchormap-check`.
 if __name__ == "__main__":
-    _main()
+    main()

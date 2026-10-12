@@ -1,7 +1,14 @@
 __pycache__/
-*.pyc
-.pytest_cache/
+*.py[cod]
+.venv/
 *.egg-info/
 dist/
 build/
-.venv/
+.pytest_cache/
+*.pdb
+*.cif
+.DS_Store
+
+# but keep small fixtures for the tests
+!tests/data/*.pdb
+!tests/data/*.cif

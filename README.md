@@ -17,13 +17,23 @@ Attaching an oligomeric enzyme to a solid support raises five questions that hav
 
 ## Install
 
-The Python package and three of its dependencies come from pip. **Three tools do not**, and must be installed separately.
+Install directly from the repository:
 
 ```bash
+pip install git+https://github.com/kkningoo/anchormap.git
+```
+
+That pulls in numpy, biopython and freesasa. To work on the code instead, clone it and install in editable mode:
+
+```bash
+git clone https://github.com/kkningoo/anchormap.git
+cd anchormap
 pip install -e .            # anchormap, numpy, biopython, freesasa
 pip install -e ".[refine]"  # adds OpenMM and PDBFixer
 pip install -e ".[dev]"     # adds pytest
 ```
+
+The Python package and three of its dependencies come from pip. **Three tools do not**, and must be installed separately.
 
 For OpenMM and PDBFixer, conda-forge is the better-supported route:
 
@@ -36,15 +46,15 @@ conda install -c conda-forge openmm pdbfixer
 | Tool | Needed for | How to get it |
 | --- | --- | --- |
 | PyRosetta | `interfaces.analyse` | Not on PyPI. Free academic licence from [RosettaCommons](https://rosettacommons.org/software/licensing), then their installer. iGEM teams qualify. |
-| MolProbity | `prep.validate` | Not on PyPI. Use the [web server](http://molprobity.biochem.duke.edu) and record output manually, or build from [rlabduke/MolProbity](https://github.com/rlabduke/MolProbity). |
+| MolProbity | `prep.parse_molprobity` | Not on PyPI and has no stable programmatic interface. Run it at the [web server](http://molprobity.biochem.duke.edu), save the summary, then parse the saved file with `prep.parse_molprobity()` or `prep.compare_validation()`. |
 | Reduce | hydrogen addition with flips, inside `prep.minimise` | Not on PyPI. Ships with MolProbity, or build from [rlabduke/reduce](https://github.com/rlabduke/reduce). |
 
-Everything that does not need these still works. The whole of `support`, the ranking and convergence logic in `interfaces`, the reachability and coverage functions in `coupling`, and all of `guards` run on a bare `pip install -e .`.
+Everything that does not need these still works. The whole of `support`, the ranking and convergence logic in `interfaces`, the reachability and coverage functions in `coupling`, the MolProbity summary parser in `prep`, and all of `guards` run on a bare install.
 
 ### Check what you have
 
 ```bash
-python -m anchormap.requirements
+anchormap-check
 ```
 
 Prints each tool, what it is used for, whether it is present, and the install route for anything missing. Every wrapper calls the same check before it runs, so a missing tool surfaces as `MissingToolError` naming the tool and its source rather than an `ImportError` from inside a dependency.

@@ -29,6 +29,9 @@ dependencies = [
   "freesasa>=2.2",
 ]
 
+[project.scripts]
+anchormap-check = "anchormap.requirements:main"
+
 [project.optional-dependencies]
 refine = ["openmm>=8.1", "pdbfixer>=1.9"]
 dev = ["pytest>=8.0"]

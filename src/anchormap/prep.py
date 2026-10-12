@@ -147,17 +147,93 @@ def add_hydrogens_with_flips(path: str, out_path: str | None = None) -> str:
     return out_path
 
 
-def validate(path: str) -> dict:
-    """MolProbity, before and after. Report both.
+def parse_molprobity(path: str) -> dict:
+    """Read a saved MolProbity summary into a dict.
 
-    The B-factor filter is inverted on predicted models: the B column holds
-    pLDDT, where high is good, so a low-B selection retains the worst
-    residues. A clashscore of zero from such a filter is an empty selection.
+    MolProbity has no stable programmatic interface, so the run itself is
+    done by hand at molprobity.biochem.duke.edu and the summary saved. This
+    reads that file, whether saved as text or as the HTML summary page, so
+    the numbers reach a report without being retyped.
+
+    Retyping is the failure this avoids: a validation table is long, every
+    value has a percentage beside it, and a transposed digit in a clashscore
+    is invisible to a reader.
+
+    Returns the metrics it finds; keys absent from the file are absent from
+    the dict rather than guessed.
     """
-    require('molprobity')
+    import re
+
+    text = open(path, encoding="utf-8", errors="replace").read()
+    # Strip HTML tags only. A bare "<" or ">" is ordinary MolProbity text --
+    # goals are written "Goal: <0.3%" and "Cbeta deviations >0.25A" -- and a
+    # greedy <...> pattern deletes everything between them, silently removing
+    # the Ramachandran and MolProbity score rows.
+    text = re.sub(r"</?[A-Za-z!][^>]*>", " ", text)
+    text = re.sub(r"&[a-z]+;", " ", text)
+    text = re.sub(r"[ \t]+", " ", text)
+
+    num = r"(-?\d+(?:\.\d+)?)"
+    fields = {
+        "clashscore":          rf"Clashscore,?\s*all atoms:?\s*{num}",
+        "molprobity_score":    rf"MolProbity score[^0-9\-]*{num}",
+        "poor_rotamers":       rf"Poor rotamers\s*{num}",
+        "favoured_rotamers":   rf"Favou?red rotamers\s*{num}",
+        "rama_outliers":       rf"Ramachandran outliers\s*{num}",
+        "rama_favoured":       rf"Ramachandran favou?red\s*{num}",
+        "rama_z":              rf"Rama distribution Z-score[^0-9\-]*{num}",
+        "cbeta_deviations":    rf"C\S* deviations[^0-9]*0\.25[^0-9]*{num}",
+        "bad_bonds":           rf"Bad bonds:?\s*{num}",
+        "bad_angles":          rf"Bad angles:?\s*{num}",
+        "cablam_outliers":     rf"CaBLAM outliers\s*{num}",
+        "ca_geometry_outliers": rf"CA Geometry outliers\s*{num}",
+        "cis_prolines":        rf"Cis Prolines:?\s*{num}",
+        "chiral_outliers":     rf"Chiral volume outliers\s*{num}",
+    }
+
+    out = {}
+    for key, pattern in fields.items():
+        m = re.search(pattern, text, re.I)
+        if m:
+            out[key] = float(m.group(1))
+
+    if not out:
+        raise ValueError(
+            f"no MolProbity metrics found in {path}. Save the summary page "
+            "or its text export, not a screenshot."
+        )
+    return out
+
+
+def compare_validation(before: str, after: str) -> dict:
+    """Before and after refinement, side by side.
+
+    Report both. A single post-refinement table says the structure is good;
+    the pair says the refinement did something, and shows what it cost. Minor
+    regressions in bond angles, rotamers and C-beta deviation are expected
+    under positional restraint and an unblemished improvement usually means
+    the restraints were not binding.
+    """
+    b, a = parse_molprobity(before), parse_molprobity(after)
+    rows = {}
+    for k in sorted(set(b) | set(a)):
+        rows[k] = {
+            "before": b.get(k),
+            "after": a.get(k),
+            "change": (a[k] - b[k]) if k in a and k in b else None,
+        }
+    return rows
+
+
+def validate(path: str) -> dict:
+    """MolProbity cannot be driven from here; run it and parse the result.
+
+    Submit the structure at molprobity.biochem.duke.edu, save the summary,
+    then use parse_molprobity() on the saved file, or compare_validation()
+    on the pre- and post-refinement pair.
+    """
     raise NotImplementedError(
-        'Port your MolProbity invocation here. Return a dict with clashscore, '
-        'molprobity_score, rama_favoured, rama_outliers, poor_rotamers, '
-        'cbeta_deviations, bad_bonds and bad_angles, and report the same keys '
-        'before and after refinement.'
+        "MolProbity has no stable programmatic interface and is not wrapped. "
+        "Run it at molprobity.biochem.duke.edu, save the summary, then call "
+        "parse_molprobity(saved_file) or compare_validation(before, after)."
     )
