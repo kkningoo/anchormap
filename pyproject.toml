@@ -34,7 +34,7 @@ refine = ["openmm>=8.1", "pdbfixer>=1.9"]
 dev = ["pytest>=8.0"]
 
 [project.urls]
-Source = "https://github.com/YOUR-ORG/anchormap"
+Source = "https://github.com/kkningoo/anchormap"
 "Model page" = "https://2026.igem.wiki/vit-vellore/model"
 
 [tool.hatch.build.targets.wheel]

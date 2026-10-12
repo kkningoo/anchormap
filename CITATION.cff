@@ -14,7 +14,7 @@ authors:
     affiliation: "iGEM VIT Vellore 2026 (Team Nishvasa)"
 license: MIT
 version: 0.2.0
-repository-code: "https://github.com/YOUR-ORG/anchormap"
+repository-code: "https://github.com/kkningoo/anchormap"
 abstract: >
   Surface, interface and support-compatibility analysis for immobilising
   multimeric enzymes. Computes assembly-state solvent accessibility, coupling
