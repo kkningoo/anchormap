@@ -1,4 +1,0 @@
-The corrected, PBC-fixed 100ns trajectory for this run (wtholo_fixed_nojump.xtc, ~5.8GB)
-lives at /home/ayush/md_gs_wt_holo/wtholo_fixed_nojump.xtc on the WSL filesystem, not
-on D:\SBE, due to limited free space there at the time of the fix. All analysis outputs
-in this folder were computed from that corrected trajectory.
